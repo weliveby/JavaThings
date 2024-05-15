@@ -5,6 +5,9 @@ import javassist.CtClass;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.util.ByteSource;
 
+/**
+ * 可以打shiro
+ */
 public class Client {
     public static void main(String []args) throws Exception {
         ClassPool pool = ClassPool.getDefault();

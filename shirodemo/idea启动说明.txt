@@ -1,0 +1,4 @@
+编辑配置
+新建maven
+运行命令写 clean package tomcat:run
+启动

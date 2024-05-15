@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>spel-demo</artifactId>
+    <artifactId>spel-spring-demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>spel-demo</name>
     <description>spel-demo</description>

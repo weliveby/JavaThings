@@ -15,6 +15,7 @@ final public class Cat {
 
     public static void main(String []args) throws Exception {
         Cat cat = new Cat();
+        // PropertyUtils.getProperty(cat, "name") 等于 cat.getName()
         System.out.println(PropertyUtils.getProperty(cat, "name"));
     }
 }

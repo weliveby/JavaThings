@@ -1,0 +1,6 @@
+rmi
+数据包中传输的类也是反序列化的字节流。
+用工具SerializationDumper可以查看。
+
+Java序列化的协议文档：https://docs.oracle.com/javase/8/docs/platform/serialization/spec/protocol.html
+这篇文档里用了一种类似BNF（巴科斯范式）的形式描述了序列化数据的语法。

